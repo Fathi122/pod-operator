@@ -18,6 +18,7 @@ package controllers
 
 import (
 	"context"
+	"time"
 
 	corev1 "k8s.io/api/core/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
@@ -77,7 +78,7 @@ func (r *PodReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.R
 	}
 	if err := r.Get(ctx, nameSpacedConfigMap, &configMap); err != nil {
 		log.Error(err, "Fetch ConfigMap failed")
-		return ctrl.Result{}, nil
+		return ctrl.Result{RequeueAfter: 3000 * time.Millisecond}, nil
 	} else {
 		log.Info("ConfigMap " + configMap.GetName() + " Found")
 
@@ -86,7 +87,7 @@ func (r *PodReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.R
 
 			if pod.Labels[podNewLabel] == value {
 				log.Info("Update not required")
-				return ctrl.Result{}, nil
+				return ctrl.Result{RequeueAfter: 3000 * time.Millisecond}, nil
 			}
 			pod.Labels[podNewLabel] = podNewLabelValue
 			log.Info("Adding label")
@@ -113,9 +114,10 @@ func (r *PodReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.R
 			return ctrl.Result{Requeue: true}, nil
 		}
 		log.Error(err, "Unable to update Pod")
-		return ctrl.Result{}, err
+		return ctrl.Result{RequeueAfter: 3000 * time.Millisecond}, err
 	}
-	return ctrl.Result{}, nil
+	//return ctrl.Result{}, nil
+	return ctrl.Result{RequeueAfter: 3000 * time.Millisecond}, nil
 }
 
 // SetupWithManager sets up the controller with the Manager.
