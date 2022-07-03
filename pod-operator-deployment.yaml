@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: pod-operator-dep
+  name: pod-operator-dep
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pod-operator-dep
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: pod-operator-dep
+    spec:
+      serviceAccountName: controller-manager-pod-ops
+      containers:
+      - image: taf122/pod-operator:0.0.1
+        name: pod-operator
+        resources: {}
+status: {}
